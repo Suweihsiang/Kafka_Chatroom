@@ -58,9 +58,9 @@ poetry run python app.py
 
 ### 2. 在第一個頁面輸入：
 
-###    你的名稱：UserA
+####    - 你的名稱：UserA
 
-###    朋友名稱：UserB
+####    - 朋友名稱：UserB
 
 ### 3. 在第二個頁面輸入相反名稱：UserB、UserA
 
@@ -68,6 +68,6 @@ poetry run python app.py
 
 ### 5. 觀察：
 
-###    Kafka 訊息是否成功寫入（透過 Kafka UI）
+####    - Kafka 訊息是否成功寫入（透過 Kafka UI）
 
-###    MongoDB 是否正確儲存訊息（透過 Mongo Express）
+####    - MongoDB 是否正確儲存訊息（透過 Mongo Express）
