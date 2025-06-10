@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>聊天室</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <style>
+        #chat-box {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            background-color: #f9f9f9;
+        }
+        .my-message {
+            background-color: #d4f4dd; /* 淺綠色 */
+            padding: 8px 12px;
+            border-radius: 15px;
+            max-width: 70%;
+            align-self: flex-end;
+            word-wrap: break-word;
+        }
+        .friend-message {
+            background-color: #cde7ff; /* 淺藍色 */
+            padding: 8px 12px;
+            border-radius: 15px;
+            max-width: 70%;
+            align-self: flex-start;
+            word-wrap: break-word;
+        }
+        #message {
+            width: 80%;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 5px;
+        }
+        button {
+            padding: 8px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .input-area {
+            display: flex;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{username}}和{{ friend }}對話中</h1>
+    <div id="chat-box"></div>
+    <div class="input-area">
+        <input type="text" id="message" placeholder="Type something...">
+        <button onclick="sendMessage()">送出</button>
+    </div>
+
+    <script>
+        const username = "{{ username }}";
+        const friend = "{{ friend }}";
+        const socket = io();
+        const chatBox = document.getElementById('chat-box');
+
+        socket.emit('join', username);
+
+        socket.on('history_message', (messages) => {
+            messages.forEach(
+            (msg) => {
+            const msgElem = document.createElement('div');
+            const time = new Date(msg.timestamp).toLocaleString();
+            msgElem.textContent = `[${time}] ${msg.sender}: ${msg.message}`;
+
+            if (msg.sender === username) {
+                msgElem.classList.add('my-message');
+            } else {
+                msgElem.classList.add('friend-message');
+            }
+
+            chatBox.appendChild(msgElem)});
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+
+        socket.on('new_message', (msg) => {
+            const msgElem = document.createElement('div');
+            const time = new Date(msg.timestamp).toLocaleString();
+            msgElem.textContent = `[${time}] ${msg.user}: ${msg.message}`;
+
+            if (msg.user === username) {
+                msgElem.classList.add('my-message');
+            } else {
+                msgElem.classList.add('friend-message');
+            }
+
+            chatBox.appendChild(msgElem);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+
+        function sendMessage() {
+            const messageInput = document.getElementById('message');
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            fetch('/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user: username, message: message })
+            });
+
+            messageInput.value = '';
+            messageInput.focus();
+        }
+
+        // 按 Enter 鍵也送出訊息
+        document.getElementById('message').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
