@@ -71,3 +71,10 @@ poetry run python app.py
   - Kafka 訊息是否成功寫入（透過 Kafka UI）
 
   - MongoDB 是否正確儲存訊息（透過 Mongo Express）
+
+## 備註
+
+請複製專案中的`.env.example`檔案，並依照下列步驟設定環境變數：
+
+  - 將`<your_secret_key>`替換為您自訂的Flask應用金鑰
+  - 將檔名`.env.example`改為`.env`（刪除`.example`副檔名）
